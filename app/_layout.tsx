@@ -55,7 +55,14 @@ export default function RootLayout() {
           />
           <Tabs.Screen
             name="nourish"
+            initialParams={{
+              title: "Nourish",
+              subtitle: "Explore recipes",
+            }}
             options={{
+              headerStatusBarHeight: 0,
+              headerTitle: "",
+              headerShown: true,
               title: "Nourish",
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
