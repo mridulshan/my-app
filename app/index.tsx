@@ -1,16 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ScrollView,
-  useColorScheme,
-  SafeAreaView,
-} from "react-native";
-import * as SplashScreen from "expo-splash-screen";
-
-import { useEffect } from "react";
-import { useFonts } from "expo-font";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { ThemedView } from "@/components/ThemedView/ThemedView.component";
 import { ThemedText } from "@/components/ThemedText/ThemedText.component";
 

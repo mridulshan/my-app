@@ -1,13 +1,21 @@
-import { SplashScreen, Tabs } from "expo-router";
 import React, { useEffect } from "react";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Animated, useColorScheme, View } from "react-native";
 import { useFonts } from "expo-font";
-import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import {
+  DefaultTheme,
+  NavigationContainer,
+  ThemeProvider,
+} from "@react-navigation/native";
 import { Colors, DarkTheme } from "@/constants/Colors";
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
+import Recipes from "./Recipes";
+import RecipeDetails from "./RecipeDetails";
+import { getDetailSharedElements } from "@/utils/getDetailSharedElements";
 
 export default function RootLayout() {
+  const Stack = createSharedElementStackNavigator();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     outfit: require("../assets/fonts/Outfit-Regular.ttf"),
@@ -16,93 +24,31 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.preventAutoHideAsync();
-    }
-  }, [loaded]);
+  // useEffect(() => {
+  //   if (loaded) {
+  //     SplashScreen.preventAutoHideAsync();
+  //   }
+  // }, [loaded]);
 
   if (!loaded) {
     return null;
   }
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <View style={{ flex: 1 }}>
-        <Tabs
-          screenOptions={{
-            tabBarActiveTintColor:
-              Colors[colorScheme ?? "light"].tabIconSelected,
-            tabBarInactiveTintColor:
-              Colors[colorScheme ?? "light"].tabIconDefault,
-            headerShown: false,
-          }}
-        >
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: "Today",
-              tabBarIcon: ({ color, focused }) => {
-                console.log("Color", color);
-
-                return (
-                  <TabBarIcon
-                    name={focused ? "home" : "home-outline"}
-                    color={color}
-                  />
-                );
-              },
-            }}
-          />
-          <Tabs.Screen
-            name="nourish"
-            options={{
-              title: "Nourish",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "water" : "water-outline"}
-                  color={color}
-                />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="explore"
-            options={{
-              title: "Explore",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "fast-food" : "fast-food-outline"}
-                  color={color}
-                />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="report"
-            options={{
-              title: "Report",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "clipboard" : "clipboard-outline"}
-                  color={color}
-                />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="loading"
-            options={{
-              title: "Seed",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "person-circle" : "person-circle-outline"}
-                  color={color}
-                />
-              ),
-            }}
-          />
-        </Tabs>
-      </View>
-    </ThemeProvider>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen
+        key="Recipes"
+        name="Recipes"
+        component={Recipes}
+      />
+      <Stack.Screen
+        key="RecipeDetails"
+        name="RecipeDetails"
+        component={RecipeDetails}
+      />
+    </Stack.Navigator>
   );
 }
