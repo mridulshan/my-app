@@ -11,14 +11,17 @@ import {
   Animated,
   StatusBar,
 } from "react-native";
-import data from "../data.json";
+import data from "../components/data.json";
 import { ThemedView } from "@/components/ThemedView/ThemedView.component";
 import { ThemedText } from "@/components/ThemedText/ThemedText.component";
-import { listConfig } from "../constants";
+import { listConfig } from "../components/constants";
 import { router } from "expo-router";
 import { SharedTransition } from "react-native-reanimated";
+import RawTouchableScale from "react-native-touchable-scale";
+
+import { SharedElement } from "react-navigation-shared-element";
 const { HEIGHT, WIDTH, RADIUS, SPACING, FULL_SIZE } = listConfig;
-export default function Recipes() {
+function Recipes({navigation}) {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   return (
     <SafeAreaView style={styles.container}>
@@ -56,15 +59,18 @@ export default function Recipes() {
             outputRange: [1, 1.2, 1],
           });
           return (
-            <TouchableOpacity
+            <RawTouchableScale
+      activeScale={0.9}
+      tension={50}
+      friction={7}
+      useNativeDriver
               onPress={() => {
-                router.push({
-                  pathname: "RecipeDetails",
-                  params: { ...item },
-                });
+                navigation.push('RecipeDetails', {item})
               }}
               style={styles.itemContainer}
             >
+              <SharedElement onNode={node => { console.log('sdkfnwon', node);
+              }} id={`item.${item.id}.photo`} style={[StyleSheet.absoluteFillObject]}>
               <View
                 style={[
                   StyleSheet.absoluteFillObject,
@@ -79,23 +85,29 @@ export default function Recipes() {
                   ]}
                 ></Animated.Image>
               </View>
+              </SharedElement>
+              <SharedElement id={`item.${item.id}.name`}
+          style={[StyleSheet.absoluteFillObject]}>
+
               <Animated.Text
                 style={[styles.foodItem, { transform: [{ translateX }] }]}
               >
                 {item.name}
               </Animated.Text>
+              </SharedElement>
               <View style={styles.caloriesContainer}>
                 <ThemedText style={styles.calories} type="subtitle">
                   {item.estimated_calories}
                 </ThemedText>
               </View>
-            </TouchableOpacity>
+            </RawTouchableScale>
           );
         }}
       />
     </SafeAreaView>
   );
 }
+export default Recipes
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

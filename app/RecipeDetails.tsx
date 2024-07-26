@@ -1,4 +1,5 @@
 import { SPACING } from "@/components/constants";
+import { getDetailSharedElements } from "@/utils/getDetailSharedElements";
 import { AntDesign } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
@@ -10,8 +11,9 @@ import {
   Text,
   View,
 } from "react-native";
-function RecipeDetails() {
-  const item = useLocalSearchParams();
+import { SharedElement } from "react-navigation-shared-element";
+function RecipeDetails({ navigation, route }) {
+  const { item } = route.params;
   console.log("Params", { item });
 
   return (
@@ -27,29 +29,42 @@ function RecipeDetails() {
           left: 10,
           zIndex: 2,
         }}
-        onPress={router.back}
+        onPress={()=>{navigation.goBack('Recipes', { item })}}
       ></AntDesign>
       <View style={[StyleSheet.absoluteFillObject]}>
-        <Animated.Image
-          fadeDuration={300}
-          id={"imageee"}
-          source={{ uri: item.image_url as string }}
-          style={[StyleSheet.absoluteFillObject, { resizeMode: "cover" }]}
-        ></Animated.Image>
+        <SharedElement
+          id={`item.${item.id}.photo`}
+          style={[StyleSheet.absoluteFillObject]}
+        >
+          <View style={[StyleSheet.absoluteFillObject]}>
+            <Image
+              source={{ uri: item.image_url }}
+              style={[StyleSheet.absoluteFillObject, { resizeMode: "cover" }]}
+            ></Image>
+          </View>
+        </SharedElement>
+        <SharedElement id={`item.${item.id}.name`}
+          style={[StyleSheet.absoluteFillObject]}>
+          <Text style={[styles.foodItem]}>{item.name}</Text>
+        </SharedElement>
       </View>
     </SafeAreaView>
   );
 }
+const styles = StyleSheet.create({
+  foodItem: {
+    color: "#000",
+    fontSize: 30,
+    fontWeight: "bold",
+    paddingHorizontal: SPACING,
+    paddingVertical: 10,
+    position: "absolute",
+    top: 70,
+    left: SPACING * 2,
+    zIndex: 2,
+  },
+});
 
-RecipeDetails.sharedElements = (route: any) => {
-  const item = useLocalSearchParams();
-  console.log("slknakdask", { route });
+RecipeDetails.sharedElements = getDetailSharedElements;
 
-  return [
-    {
-      id: `item.${item.id}.image`,
-    },
-  ];
-};
-
-export default RecipeDetails;
+export default RecipeDetails
